@@ -1,0 +1,16 @@
+const sequelize = require('../database/database');
+const User = require('./User');
+const Post = require('./Post');
+
+User.hasMany(Post, {
+    foreignKey: 'user_id',
+    onDelete: 'CASCADE'
+});
+
+Post.belongsTo(User, {
+    foreignKey: 'user_id'
+});
+
+sequelize.sync({ force: false }).then(() => {
+    console.log('Tabelas criadas');
+});
