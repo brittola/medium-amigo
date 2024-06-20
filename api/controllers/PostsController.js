@@ -49,14 +49,13 @@ class PostsController {
                 });
             }
 
+            const countLikesQuery = `CAST((SELECT COUNT(*) FROM posts_likes AS post_like WHERE post_like.post_id = post.id) AS INTEGER)`;
             const posts = await Post.findAll({
                 attributes: {
                     include: [
                         [
                             Sequelize.literal(
-                                `CAST((SELECT COUNT(*)
-                                FROM posts_likes AS post_like
-                                WHERE post_like.post_id = post.id) AS INTEGER)`
+                                countLikesQuery
                             ),
                             'likes'
                         ]
