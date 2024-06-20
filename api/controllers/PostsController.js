@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const secret = process.env.JWT_SECRET;
 const PostLike = require('../models/PostLike');
+const Sequelize = require('sequelize');
 
 class PostsController {
     async create(req, res) {
@@ -37,8 +38,31 @@ class PostsController {
         const offset = limit * (page - 1);
 
         try {
-            let posts = await Post.findAll({
-                attributes: { exclude: ['user_id', 'created_at', 'updated_at'] },
+            let loggedUserId = 0;
+            if (req.header('Authorization')) {
+                const token = req.header('Authorization').replace('Bearer ', '');
+
+                jwt.verify(token, secret, (err, decodedToken) => {
+                    if (!err) {
+                        loggedUserId = decodedToken.id;
+                    }
+                });
+            }
+
+            const posts = await Post.findAll({
+                attributes: {
+                    include: [
+                        [
+                            Sequelize.literal(
+                                `CAST((SELECT COUNT(*)
+                                FROM posts_likes AS post_like
+                                WHERE post_like.post_id = post.id) AS INTEGER)`
+                            ),
+                            'likes'
+                        ]
+                    ],
+                    exclude: ['user_id', 'created_at', 'updated_at']
+                },
                 limit,
                 offset,
                 order: [['available_at', 'DESC']],
@@ -48,28 +72,15 @@ class PostsController {
                 }
             });
 
-            let loggedUserId = 0;
-            if (req.header('Authorization')) {
-                const token = req.header('Authorization').replace('Bearer ', '');
-
-                jwt.verify(token, secret, (err, decodedToken) => {
-
-                    if (!err) {
-                        loggedUserId = decodedToken.id;
-                    }
-
-                });
-            }
-
-            posts = posts.map(post => {
+            const modifiedPosts = posts.map(post => {
                 return {
                     ...post.toJSON(),
                     allowEdit: loggedUserId === post.user.id,
-                    allowRemove: loggedUserId === post.user.id
-                }
+                    allowRemove: loggedUserId === post.user.id,
+                };
             });
 
-            res.status(200).json(posts);
+            res.status(200).json(modifiedPosts);
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: "Erro ao buscar posts." });
