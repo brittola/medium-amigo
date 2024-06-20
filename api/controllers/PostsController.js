@@ -61,9 +61,7 @@ class PostsController {
                 attributes: {
                     include: [
                         [
-                            Sequelize.literal(
-                                countLikesQuery
-                            ),
+                            Sequelize.literal(countLikesQuery),
                             'likes'
                         ]
                     ],
