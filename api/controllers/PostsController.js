@@ -37,7 +37,7 @@ class PostsController {
 
         try {
             let posts = await Post.findAll({
-                attributes: {exclude:['user_id', 'created_at', 'updated_at']},
+                attributes: { exclude: ['user_id', 'created_at', 'updated_at'] },
                 limit,
                 offset,
                 order: [['available_at', 'DESC']],
@@ -50,13 +50,13 @@ class PostsController {
             let loggedUserId = 0;
             if (req.header('Authorization')) {
                 const token = req.header('Authorization').replace('Bearer ', '');
-    
+
                 jwt.verify(token, secret, (err, decodedToken) => {
-                
+
                     if (!err) {
                         loggedUserId = decodedToken.id;
                     }
-        
+
                 });
             }
 
@@ -75,8 +75,55 @@ class PostsController {
         }
     }
 
+    async update(req, res) {
+        const { title, content, summary } = req.body;
+        const postId = req.params.id;
+        const { loggedUserId } = res.locals;
+
+        if (!postId) {
+            res.status(400).send("É necessário indicar o id do post para atualizar");
+            return;
+        }
+
+        try {
+            const post = await Post.findOne({ where: { id: postId } });
+
+            if (!post) {
+                res.status(404).send("Postagem não encontrada");
+                return;
+            }
+
+            if (post.user_id != loggedUserId) {
+                res.status(403).send("Não é possível atualizar o post de outro usuário");
+                return;
+            }
+
+            const updatedFields = {};
+
+            if (title && title !== "") {
+                updatedFields.title = title;
+            }
+            if (content && content !== "") {
+                updatedFields.content = content;
+            }
+            if (summary && summary !== "") {
+                updatedFields.summary = summary;
+            }
+
+            if (Object.keys(updatedFields).length > 0) {
+                await post.update(updatedFields);
+            }
+
+            res.status(200).send("Post atualizado com sucesso");
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).send("Não foi possível atualizar o post");
+        }
+    }
+
     async remove(req, res) {
-        let postId  = req.params.id;
+        const postId = req.params.id;
         const { loggedUserId } = res.locals;
 
         if (!postId) {
@@ -85,7 +132,7 @@ class PostsController {
         }
 
         try {
-            const post = await Post.findOne({ where: { id: postId }});
+            const post = await Post.findOne({ where: { id: postId } });
 
             if (!post) {
                 res.status(404).send("Postagem não encontrada");
@@ -99,7 +146,7 @@ class PostsController {
 
             await post.destroy();
             res.status(202).send("Post excluído");
-        } catch(err) {
+        } catch (err) {
             console.log(err);
             res.status(500).send("Erro ao excluir a postagem");
         }

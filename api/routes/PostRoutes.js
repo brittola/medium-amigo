@@ -5,6 +5,7 @@ const PostsController = require('../controllers/PostsController');
 
 router.get('/posts', PostsController.get);
 router.post('/posts', Authenticator.verifyToken, PostsController.create);
+router.put('/posts/:id', Authenticator.verifyToken, PostsController.update);
 router.delete('/posts/:id', Authenticator.verifyToken, PostsController.remove);
 
 module.exports = router;
