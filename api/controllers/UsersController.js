@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-const { hasEmptyField } = require('../validator/Validator');
+const { hasEmptyField } = require('../utils/UserValidator');
 
 class UsersController {
 
@@ -24,8 +24,8 @@ class UsersController {
                 return;
             }
 
-            let salt = await bcrypt.genSaltSync(10);
-            let hash = await bcrypt.hashSync(password, salt);
+            let salt = bcrypt.genSaltSync(10);
+            let hash = bcrypt.hashSync(password, salt);
 
             await User.create({ name, email, password: hash });
             res.status(201).send("Usuário criado com sucesso");
