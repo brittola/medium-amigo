@@ -4,6 +4,7 @@ const { hasEmptyField } = require('../utils/Validator');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const secret = process.env.JWT_SECRET;
+const PostLike = require('../models/PostLike');
 
 class PostsController {
     async create(req, res) {
@@ -149,6 +150,27 @@ class PostsController {
         } catch (err) {
             console.log(err);
             res.status(500).send("Erro ao excluir a postagem");
+        }
+    }
+
+    async like(req, res) {
+        const postId = req.params.id;
+        const { loggedUserId } = res.locals;
+
+        try {
+            const like = await PostLike.findOne({ where: { post_id: postId, user_id: loggedUserId } });
+
+            if (like) {
+                res.status(400).send("Este post já foi curtido por este usuário");
+                return;
+            }
+
+            await PostLike.create({ post_id: postId, user_id: loggedUserId });
+            res.send("Like registrado");
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).send("Não foi possível dar like no post");
         }
     }
 }
