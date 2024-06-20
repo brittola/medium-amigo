@@ -173,6 +173,32 @@ class PostsController {
             res.status(500).send("Não foi possível dar like no post");
         }
     }
+
+    async unlike(req, res) {
+        const postId = req.params.id;
+        const { loggedUserId } = res.locals;
+
+        try {
+            const like = await PostLike.findOne({ where: { post_id: postId, user_id: loggedUserId } });
+
+            if (!like) {
+                res.status(400).send("Este usuário não curtiu este post");
+                return;
+            }
+
+            if (like.user_id != loggedUserId) {
+                res.status(403).send("Não é possível remover o like de outro usuário");
+                return;
+            }
+
+            await like.destroy();
+            res.status(202).send("Like removido");
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).send("Não foi remover like do post");
+        }
+    }
 }
 
 module.exports = new PostsController();

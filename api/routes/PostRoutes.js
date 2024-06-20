@@ -9,5 +9,6 @@ router.put('/posts/:id', Authenticator.verifyToken, PostsController.update);
 router.delete('/posts/:id', Authenticator.verifyToken, PostsController.remove);
 
 router.post('/like/:id', Authenticator.verifyToken, PostsController.like);
+router.delete('/like/:id', Authenticator.verifyToken, PostsController.unlike);
 
 module.exports = router;
