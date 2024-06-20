@@ -14,11 +14,6 @@ const Post = sequelize.define('post', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    likes: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-    },
     available_at: {
         type: DataTypes.DATE,
         allowNull: false,
