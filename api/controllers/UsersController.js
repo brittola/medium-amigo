@@ -47,7 +47,7 @@ class UsersController {
         }
 
         try {
-            const user = await User.findOne({ email });
+            const user = await User.findOne({ where: { email } });
 
             if (user) {
                 if (bcrypt.compareSync(password, user.password)) {

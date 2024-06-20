@@ -1,8 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database');
-const User = require('./User');
 
-const Post = sequelize.define('Post', {
+const Post = sequelize.define('post', {
     title: {
         type: DataTypes.STRING,
         allowNull: false
@@ -29,10 +28,6 @@ const Post = sequelize.define('Post', {
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
-});
-
-Post.belongsTo(User, {
-    foreignKey: 'user_id'
 });
 
 module.exports = Post;

@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database');
 const Post = require('./Post');
 
-const User = sequelize.define('User', {
+const User = sequelize.define('user', {
     name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -22,9 +22,14 @@ const User = sequelize.define('User', {
     updatedAt: 'updated_at'
 });
 
+// relacionamentos
 User.hasMany(Post, {
     foreignKey: 'user_id',
     onDelete: 'CASCADE'
+});
+
+Post.belongsTo(User, {
+    foreignKey: 'user_id'
 });
 
 module.exports = User;
