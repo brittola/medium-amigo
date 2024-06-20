@@ -2,6 +2,7 @@ const express = require('express');
 const sequelize = require('./database/database');
 require('dotenv').config();
 const UserRoutes = require('./routes/UserRoutes');
+const PostRoutes = require('./routes/PostRoutes');
 
 const app = express();
 
@@ -12,6 +13,7 @@ sequelize.authenticate()
     .catch(err => console.error('Não foi possível conectar ao banco de dados: ', err));
 
 app.use('/', UserRoutes);
+app.use('/', PostRoutes);
 
 app.listen(process.env.SERVER_PORT, err => {
     if (err) {

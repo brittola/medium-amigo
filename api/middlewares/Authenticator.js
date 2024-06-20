@@ -4,6 +4,11 @@ const secret = process.env.JWT_SECRET;
 
 class Authenticator {
     verifyToken(req, res, next) {
+        if (!req.header('Authorization')) {
+            res.status(400).send("Você deve enviar um token de autorização")
+            return;
+        }
+
         const token = req.header('Authorization').replace('Bearer ', '');
 
         jwt.verify(token, secret, (err, decodedToken) => {

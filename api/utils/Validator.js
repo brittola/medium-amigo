@@ -1,4 +1,4 @@
-class UserValidator {
+class Validator {
     hasEmptyField(...fields) {
         if (fields.includes(undefined)) return true;
         if (fields.includes("")) return true;
@@ -6,4 +6,4 @@ class UserValidator {
     }
 }
 
-module.exports = new UserValidator();
+module.exports = new Validator();

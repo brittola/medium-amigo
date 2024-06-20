@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-const { hasEmptyField } = require('../utils/UserValidator');
+const { hasEmptyField } = require('../utils/Validator');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const secret = process.env.JWT_SECRET;
