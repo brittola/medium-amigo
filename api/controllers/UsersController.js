@@ -18,7 +18,7 @@ class UsersController {
         }
 
         try {
-            const user = await User.findOne({ where: { email } });
+            const user = await User.findOne({ where: { email, is_deleted: false } });
 
             if (user) {
                 res.status(400).json({
@@ -47,7 +47,7 @@ class UsersController {
         }
 
         try {
-            const user = await User.findOne({ where: { email } });
+            const user = await User.findOne({ where: { email, is_deleted: false } });
 
             if (user) {
                 if (bcrypt.compareSync(password, user.password)) {

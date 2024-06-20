@@ -6,6 +6,7 @@ require('dotenv').config();
 const secret = process.env.JWT_SECRET;
 const PostLike = require('../models/PostLike');
 const Sequelize = require('sequelize');
+const sequelize = require('../database/database');
 
 class PostsController {
     async create(req, res) {
@@ -15,6 +16,8 @@ class PostsController {
             res.status(400).send("Um ou mais campos faltando");
             return;
         }
+
+        const t = await sequelize.transaction();
 
         try {
             await Post.create({ title, content, summary, user_id: res.locals.loggedUserId });
@@ -51,6 +54,9 @@ class PostsController {
 
             const countLikesQuery = `CAST((SELECT COUNT(*) FROM posts_likes AS post_like WHERE post_like.post_id = post.id) AS INTEGER)`;
             const posts = await Post.findAll({
+                where: {
+                    is_deleted: false
+                },
                 attributes: {
                     include: [
                         [
@@ -97,7 +103,7 @@ class PostsController {
         }
 
         try {
-            const post = await Post.findOne({ where: { id: postId } });
+            const post = await Post.findOne({ where: { id: postId, is_deleted: false } });
 
             if (!post) {
                 res.status(404).send("Postagem não encontrada");
@@ -142,8 +148,10 @@ class PostsController {
             return;
         }
 
+        const t = await sequelize.transaction();
+
         try {
-            const post = await Post.findOne({ where: { id: postId } });
+            const post = await Post.findOne({ where: { id: postId, is_deleted: false }, transaction: t });
 
             if (!post) {
                 res.status(404).send("Postagem não encontrada");
@@ -155,9 +163,14 @@ class PostsController {
                 return;
             }
 
-            await post.destroy();
+
+            await post.update({ is_deleted: true }, { transaction: t });
+            await post.destroy({ transaction: t });
+            t.commit();
+            
             res.status(202).send("Post excluído");
         } catch (err) {
+            await t.rollback();
             console.log(err);
             res.status(500).send("Erro ao excluir a postagem");
         }
@@ -167,18 +180,29 @@ class PostsController {
         const postId = req.params.id;
         const { loggedUserId } = res.locals;
 
+        const t = await sequelize.transaction();
+
         try {
-            const like = await PostLike.findOne({ where: { post_id: postId, user_id: loggedUserId } });
+            const like = await PostLike.findOne({ where: { post_id: postId, user_id: loggedUserId, is_deleted: false }, transaction: t });
 
             if (like) {
                 res.status(400).send("Este post já foi curtido por este usuário");
                 return;
             }
 
-            await PostLike.create({ post_id: postId, user_id: loggedUserId });
+            const post = await Post.findOne({ where: {id: postId, is_deleted: false }, transaction: t });
+
+            if (!post) {
+                res.status(400).send("Essa publicação não existe");
+                return;
+            }
+
+            await PostLike.create({ post_id: postId, user_id: loggedUserId }, { transaction: t });
+            await t.commit();
             res.send("Like registrado");
 
         } catch (err) {
+            await t.rollback();
             console.log(err);
             res.status(500).send("Não foi possível dar like no post");
         }
@@ -188,23 +212,31 @@ class PostsController {
         const postId = req.params.id;
         const { loggedUserId } = res.locals;
 
+        const t = await sequelize.transaction();
+
         try {
-            const like = await PostLike.findOne({ where: { post_id: postId, user_id: loggedUserId } });
+            const post = await Post.findOne({ where: {id: postId, is_deleted: false }, transaction: t });
+
+            if (!post) {
+                res.status(400).send("Essa publicação não existe");
+                return;
+            }
+
+            const like = await PostLike.findOne({ where: { post_id: postId, user_id: loggedUserId, is_deleted: false }, transaction: t });
 
             if (!like) {
                 res.status(400).send("Este usuário não curtiu este post");
                 return;
             }
 
-            if (like.user_id != loggedUserId) {
-                res.status(403).send("Não é possível remover o like de outro usuário");
-                return;
-            }
+            await like.update({ is_deleted: true }, { transaction: t });
+            await like.destroy({ transaction: t });
+            await t.commit();
 
-            await like.destroy();
             res.status(202).send("Like removido");
 
         } catch (err) {
+            await t.rollback();
             console.log(err);
             res.status(500).send("Não foi remover like do post");
         }

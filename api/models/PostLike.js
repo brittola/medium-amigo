@@ -17,11 +17,18 @@ const PostLike = sequelize.define('posts_likes', {
             model: 'posts',
             key: 'id'
         }
+    },
+    is_deleted: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     }
 }, {
     timestamps: true,
+    paranoid: true,
     createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    updatedAt: 'updated_at',
+    deletedAt: 'deleted_at'
 });
 
 module.exports = PostLike;
