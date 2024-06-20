@@ -74,6 +74,36 @@ class PostsController {
             res.status(500).json({ error: "Erro ao buscar posts." });
         }
     }
+
+    async remove(req, res) {
+        let postId  = req.params.id;
+        const { loggedUserId } = res.locals;
+
+        if (!postId) {
+            res.status(400).send("É necessário indicar o id do post para excluir");
+            return;
+        }
+
+        try {
+            const post = await Post.findOne({ where: { id: postId }});
+
+            if (!post) {
+                res.status(404).send("Postagem não encontrada");
+                return;
+            }
+
+            if (post.user_id != loggedUserId) {
+                res.status(403).send("Não é possível excluir a postagem de outro usuário");
+                return;
+            }
+
+            await post.destroy();
+            res.status(202).send("Post excluído");
+        } catch(err) {
+            console.log(err);
+            res.status(500).send("Erro ao excluir a postagem");
+        }
+    }
 }
 
 module.exports = new PostsController();
