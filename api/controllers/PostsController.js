@@ -192,7 +192,7 @@ class PostsController {
             const post = await Post.findOne({ where: {id: postId, is_deleted: false }, transaction: t });
 
             if (!post) {
-                res.status(400).send("Essa publicação não existe");
+                res.status(404).send("Essa publicação não existe");
                 return;
             }
 
@@ -217,7 +217,7 @@ class PostsController {
             const post = await Post.findOne({ where: {id: postId, is_deleted: false }, transaction: t });
 
             if (!post) {
-                res.status(400).send("Essa publicação não existe");
+                res.status(404).send("Essa publicação não existe");
                 return;
             }
 

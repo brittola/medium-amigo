@@ -11,9 +11,7 @@ class UsersController {
         const { name, email, password } = req.body;
 
         if (hasEmptyField(name, email, password)) {
-            res.status(400).json({
-                error: "Um ou mais campos faltando"
-            });
+            res.status(400).send("Um ou mais campos faltando");
             return;
         }
 
@@ -21,9 +19,7 @@ class UsersController {
             const user = await User.findOne({ where: { email, is_deleted: false } });
 
             if (user) {
-                res.status(400).json({
-                    error: "Já existe um usuário cadastrado com este e-mail"
-                });
+                res.status(400).send("Já existe um usuário cadastrado com este e-mail");
                 return;
             }
 
