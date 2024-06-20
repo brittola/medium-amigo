@@ -10,17 +10,15 @@ const sequelize = require('../database/database');
 
 class PostsController {
     async create(req, res) {
-        const { title, content, summary } = req.body;
+        const { title, content, summary, available_at } = req.body;
 
         if (hasEmptyField(title, content, summary)) {
             res.status(400).send("Um ou mais campos faltando");
             return;
         }
 
-        const t = await sequelize.transaction();
-
         try {
-            await Post.create({ title, content, summary, user_id: res.locals.loggedUserId });
+            await Post.create({ title, content, summary, available_at, user_id: res.locals.loggedUserId });
             res.status(201).send("Post publicado");
         } catch (err) {
             console.log(err);
@@ -55,7 +53,10 @@ class PostsController {
             const countLikesQuery = `CAST((SELECT COUNT(*) FROM posts_likes AS post_like WHERE post_like.post_id = post.id) AS INTEGER)`;
             const posts = await Post.findAll({
                 where: {
-                    is_deleted: false
+                    is_deleted: false,
+                    available_at: {
+                        [Sequelize.Op.lt]: Sequelize.literal('CURRENT_TIMESTAMP')
+                    }
                 },
                 attributes: {
                     include: [
