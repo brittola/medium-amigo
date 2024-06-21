@@ -21,6 +21,9 @@ O projeto consiste num blog como o "Medium", permitindo visualização de public
 5. Rode o comando `npm start` para rodar o servidor;
 6. Pronto! Agora você pode testar a API.
 
+### Dica de uso
+Para carregar as rotas em um programa como Insomnia ou Postman, você pode importar o arquivo "api-requests.json", na pasta "api".
+
 ## API - Rotas
 
 #### POST /users
