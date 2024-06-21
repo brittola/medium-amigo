@@ -40,7 +40,7 @@ Post.belongsTo(User, {
     foreignKey: 'user_id'
 });
 
-User.belongsToMany(Post, { through: PostLike, foreignKey: 'user_id', otherKey: 'post_id' });
-Post.belongsToMany(User, { through: PostLike, foreignKey: 'post_id', otherKey: 'user_id' });
+User.belongsToMany(Post, { through: PostLike, foreignKey: 'user_id', otherKey: 'post_id', onDelete: 'CASCADE' });
+Post.belongsToMany(User, { through: PostLike, foreignKey: 'post_id', otherKey: 'user_id', onDelete: 'CASCADE' });
 
 module.exports = User;
