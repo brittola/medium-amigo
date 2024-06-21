@@ -50,7 +50,7 @@ class PostsController {
                 });
             }
 
-            const countLikesQuery = `CAST((SELECT COUNT(*) FROM posts_likes AS post_like WHERE post_like.post_id = post.id) AS INTEGER)`;
+            const countLikesQuery = `CAST((SELECT COUNT(*) FROM posts_likes AS post_like WHERE post_like.is_deleted = false AND post_like.post_id = post.id) AS INTEGER)`;
             const posts = await Post.findAll({
                 where: {
                     is_deleted: false,
