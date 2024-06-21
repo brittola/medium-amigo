@@ -7,18 +7,25 @@ const secret = process.env.JWT_SECRET;
 const PostLike = require('../models/PostLike');
 const Sequelize = require('sequelize');
 const sequelize = require('../database/database');
+const { addHours, parseISO, subHours } = require('date-fns');
 
 class PostsController {
     async create(req, res) {
         const { title, content, summary, available_at } = req.body;
+        const { loggedUserId } = res.locals;
 
         if (hasEmptyField(title, content, summary)) {
             res.status(400).send("Um ou mais campos faltando");
             return;
         }
 
+        let adjustedAvailableAt;
+        if (available_at) {
+            adjustedAvailableAt = addHours(parseISO(available_at), 3);
+        }
+
         try {
-            await Post.create({ title, content, summary, available_at, user_id: res.locals.loggedUserId });
+            await Post.create({ title, content, summary, available_at: adjustedAvailableAt, user_id: loggedUserId });
             res.status(201).send("Post publicado");
         } catch (err) {
             console.log(err);
@@ -77,8 +84,10 @@ class PostsController {
             });
 
             const modifiedPosts = posts.map(post => {
+                const postJSON = post.toJSON();
+                postJSON.available_at = subHours(new Date(postJSON.available_at), 3);
                 return {
-                    ...post.toJSON(),
+                    ...postJSON,
                     allowEdit: loggedUserId === post.user.id,
                     allowRemove: loggedUserId === post.user.id,
                 };
