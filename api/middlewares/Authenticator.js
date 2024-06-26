@@ -1,18 +1,18 @@
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+import jwt from 'jsonwebtoken';
+import 'dotenv/config';
+
 const secret = process.env.JWT_SECRET;
 
-class Authenticator {
+export default class Authenticator {
     verifyToken(req, res, next) {
         if (!req.header('Authorization')) {
-            res.status(400).send("Você deve enviar um token de autorização")
+            res.status(400).send("Você deve enviar um token de autorização");
             return;
         }
 
         const token = req.header('Authorization').replace('Bearer ', '');
 
         jwt.verify(token, secret, (err, decodedToken) => {
-            
             if (err) {
                 res.status(401).send("Token inválido");
                 return;
@@ -23,5 +23,3 @@ class Authenticator {
         });
     }
 }
-
-module.exports = new Authenticator();

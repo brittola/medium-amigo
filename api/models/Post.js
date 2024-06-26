@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../database/database');
+import { DataTypes } from 'sequelize';
+import sequelize from '../database/database.js';
 
 const Post = sequelize.define('post', {
     title: {
@@ -32,4 +32,4 @@ const Post = sequelize.define('post', {
     deletedAt: 'deleted_at'
 });
 
-module.exports = Post;
+export default Post;

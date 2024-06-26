@@ -1,8 +1,15 @@
-const express = require('express');
-const UsersController = require('../controllers/UsersController');
-const router = express.Router();
+import express from 'express';
+import UsersController from '../controllers/UsersController.js';
 
-router.post('/users', UsersController.create);
-router.post('/users/auth', UsersController.auth);
+export default class UserRoutes {
+    constructor() {
+        this.router = express.Router();
+    }
 
-module.exports = router;
+    setup() {
+        this.router.post('/', UsersController.create);
+        this.router.post('/auth', UsersController.auth);
+
+        return this.router;
+    }
+}

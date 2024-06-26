@@ -1,8 +1,10 @@
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
-const { hasEmptyField } = require('../utils/Validator');
-require('dotenv').config();
-const jwt = require('jsonwebtoken');
+import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import Validator from '../utils/Validator.js';
+const { hasEmptyField } = Validator;
+import 'dotenv/config';
+import jwt from 'jsonwebtoken';
+
 const secret = process.env.JWT_SECRET;
 
 class UsersController {
@@ -75,4 +77,4 @@ class UsersController {
     }
 }
 
-module.exports = new UsersController();
+export default new UsersController();

@@ -1,14 +1,22 @@
-const express = require('express');
-const router = express.Router();
-const Authenticator = require('../middlewares/Authenticator');
-const PostsController = require('../controllers/PostsController');
+import express from 'express';
+import Authenticator from '../middlewares/Authenticator.js';
+import PostsController from '../controllers/PostsController.js';
 
-router.get('/posts', PostsController.get);
-router.post('/posts', Authenticator.verifyToken, PostsController.create);
-router.put('/posts/:id', Authenticator.verifyToken, PostsController.update);
-router.delete('/posts/:id', Authenticator.verifyToken, PostsController.remove);
+export default class PostRoutes {
+    constructor() {
+        this.router = express.Router();
+        this.Authenticator = new Authenticator();
+    }
 
-router.post('/like/:id', Authenticator.verifyToken, PostsController.like);
-router.delete('/like/:id', Authenticator.verifyToken, PostsController.unlike);
+    setup() {
+        this.router.get('/', PostsController.get);
+        this.router.post('/', this.Authenticator.verifyToken, PostsController.create);
+        this.router.put('/:id', this.Authenticator.verifyToken, PostsController.update);
+        this.router.delete('/:id', this.Authenticator.verifyToken, PostsController.remove);
+        
+        this.router.post('/like/:id', this.Authenticator.verifyToken, PostsController.like);
+        this.router.delete('/like/:id', this.Authenticator.verifyToken, PostsController.unlike);
 
-module.exports = router;
+        return this.router;
+    }
+}

@@ -1,7 +1,7 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../database/database');
-const Post = require('./Post');
-const PostLike = require('./PostLike');
+import { DataTypes } from 'sequelize';
+import sequelize from '../database/database.js';
+import Post from './Post.js';
+import PostLike from './PostLike.js';
 
 const User = sequelize.define('user', {
     name: {
@@ -43,4 +43,4 @@ Post.belongsTo(User, {
 User.belongsToMany(Post, { through: PostLike, foreignKey: 'user_id', otherKey: 'post_id', onDelete: 'CASCADE' });
 Post.belongsToMany(User, { through: PostLike, foreignKey: 'post_id', otherKey: 'user_id', onDelete: 'CASCADE' });
 
-module.exports = User;
+export default User;

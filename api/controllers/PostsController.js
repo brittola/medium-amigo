@@ -1,13 +1,14 @@
-const Post = require('../models/Post');
-const User = require('../models/User');
-const { hasEmptyField } = require('../utils/Validator');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+import Post from '../models/Post.js';
+import User from '../models/User.js';
+import Validator from '../utils/Validator.js';
+const { hasEmptyField } = Validator;
+import jwt from 'jsonwebtoken';
+import 'dotenv/config';
 const secret = process.env.JWT_SECRET;
-const PostLike = require('../models/PostLike');
-const Sequelize = require('sequelize');
-const sequelize = require('../database/database');
-const { addHours, parseISO, subHours } = require('date-fns');
+import PostLike from '../models/PostLike.js';
+import Sequelize from 'sequelize';
+import sequelize from '../database/database.js';
+import { addHours, parseISO, subHours } from 'date-fns';
 
 class PostsController {
     async create(req, res) {
@@ -251,4 +252,4 @@ class PostsController {
     }
 }
 
-module.exports = new PostsController();
+export default new PostsController();
