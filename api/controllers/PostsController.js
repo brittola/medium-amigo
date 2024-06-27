@@ -1,6 +1,4 @@
-import Post from '../models/Post.js';
 import 'dotenv/config';
-import PostLike from '../models/PostLike.js';
 import sequelize from '../database/database.js';
 import { addHours, parseISO } from 'date-fns';
 import PostSchemas from '../schemas/Post.js';
@@ -9,7 +7,7 @@ import AuthUtils from '../utils/AuthUtils.js';
 import Validator from '../utils/Validator.js';
 import LikesService from '../services/LikesService.js';
 
-class PostsController {
+export default class PostsController {
 
     async create(req, res) {
         const { title, content, summary, available_at } = req.body;
@@ -202,9 +200,7 @@ class PostsController {
                 return;
             }
 
-            res.status(500).send("Não foi possível remover like do post");
+            res.status(500).json({ error: "Não foi possível remover like do post" });
         }
     }
 }
-
-export default new PostsController();

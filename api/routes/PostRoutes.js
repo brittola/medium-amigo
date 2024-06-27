@@ -5,17 +5,18 @@ import PostsController from '../controllers/PostsController.js';
 export default class PostRoutes {
     constructor() {
         this.router = express.Router();
-        this.Authenticator = new Authenticator();
+
+        this.PostsController = new PostsController();
     }
 
     setup() {
-        this.router.get('/', PostsController.get);
-        this.router.post('/', this.Authenticator.verifyToken, PostsController.create);
-        this.router.put('/:id', this.Authenticator.verifyToken, PostsController.update);
-        this.router.delete('/:id', this.Authenticator.verifyToken, PostsController.remove);
+        this.router.get('/', this.PostsController.get);
+        this.router.post('/', Authenticator.verifyToken, this.PostsController.create);
+        this.router.put('/:id', Authenticator.verifyToken, this.PostsController.update);
+        this.router.delete('/:id', Authenticator.verifyToken, this.PostsController.remove);
         
-        this.router.post('/like/:id', this.Authenticator.verifyToken, PostsController.like);
-        this.router.delete('/like/:id', this.Authenticator.verifyToken, PostsController.unlike);
+        this.router.post('/like/:id', Authenticator.verifyToken, this.PostsController.like);
+        this.router.delete('/like/:id', Authenticator.verifyToken, this.PostsController.unlike);
 
         return this.router;
     }

@@ -1,10 +1,4 @@
 export default class Validator {
-    static hasEmptyField(...fields) {
-        if (fields.includes(undefined)) return true;
-        if (fields.includes("")) return true;
-        return false;
-    }
-
     static removeEmptyFields(data) {
         const updatedFields = {};
 

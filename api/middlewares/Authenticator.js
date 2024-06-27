@@ -4,7 +4,7 @@ import 'dotenv/config';
 const secret = process.env.JWT_SECRET;
 
 export default class Authenticator {
-    verifyToken(req, res, next) {
+    static verifyToken(req, res, next) {
         if (!req.header('Authorization')) {
             res.status(400).send("Você deve enviar um token de autorização");
             return;

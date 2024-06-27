@@ -1,13 +1,10 @@
-import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import 'dotenv/config';
-import jwt from 'jsonwebtoken';
 import UserSchemas from '../schemas/User.js';
 import UsersService from '../services/UsersService.js';
+import AuthUtils from '../utils/AuthUtils.js';
 
-const secret = process.env.JWT_SECRET;
-
-class UsersController {
+export default class UsersController {
 
     async create(req, res) {
         const { name, email, password } = req.body;
@@ -51,21 +48,14 @@ class UsersController {
                 return;
             }
 
-            if (bcrypt.compareSync(password, user.password)) {
-                const MONTH = 30 * 24 * 60 * 60;
-
-                jwt.sign({ id: user.id, email }, secret, { expiresIn: MONTH }, (err, token) => {
-                    if (err) {
-                        throw err;
-                    } else {
-                        res.json({ token });
-                    }
-                });
-
+            if (!bcrypt.compareSync(password, user.password)) {
+                res.status(401).json({ error: "E-mail ou senha incorreta" });
                 return;
             }
 
-            res.status(401).send("E-mail ou senha incorreta");
+            const token = await AuthUtils.signToken({ id: user.id, email });
+
+            res.json({ token, name: user.name });
 
         } catch (err) {
             console.log(err);
@@ -75,9 +65,7 @@ class UsersController {
                 return;
             }
 
-            res.status(500).send("Erro ao autenticar usuário");
+            res.status(500).json({ error: "Erro ao autenticar usuário" });
         }
     }
 }
-
-export default new UsersController();
