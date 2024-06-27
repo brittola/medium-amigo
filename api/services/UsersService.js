@@ -9,9 +9,9 @@ class UsersService {
             throw err;
         }
     }
-    async create(name, email, password) {
+    async create(data) {
         try {
-            await User.create({ name, email, password });
+            await User.create(data);
             return true;
         } catch (err) {
             throw err;
