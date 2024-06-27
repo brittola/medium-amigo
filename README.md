@@ -7,6 +7,7 @@ O projeto consiste num blog como o "Medium", permitindo visualização de public
 	- Sequelize e Sequelize CLI
 	- JWT
 	- Bcrypt
+    - Yup
 - PostgreSQL
 
 ### Como rodar o projeto?
@@ -64,7 +65,8 @@ Em que `email` e `password` não podem ser vazios.
 - Se o ocorrer tudo bem, retorna um json com o token assinado:
 ```json
 {
-	"token": "exemplodetokenjwt"
+	"token": "exemplodetokenjwt",
+    "name": "Nome do Usuário Logado"
 }
 ```
 - Se houver algum erro no processo de assinatura do token, retorna o erro _500 - Internal Server Error_
@@ -120,7 +122,7 @@ Você pode optar por enviar o token JWT, recebido da rota `POST /users/auth`, no
             "id": 101,
             "name": "Ana Silva"
         },
-		// caso seu id de usuário identificado no jwt seja 101
+    // caso seu id de usuário identificado no jwt seja 101
         "allowEdit": true,
         "allowRemove": true
     },
