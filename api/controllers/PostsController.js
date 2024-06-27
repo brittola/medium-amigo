@@ -1,24 +1,19 @@
 import Post from '../models/Post.js';
-import User from '../models/User.js';
-import Validator from '../utils/Validator.js';
-const { hasEmptyField } = Validator;
-import jwt from 'jsonwebtoken';
 import 'dotenv/config';
-const secret = process.env.JWT_SECRET;
 import PostLike from '../models/PostLike.js';
-import Sequelize from 'sequelize';
 import sequelize from '../database/database.js';
-import { addHours, parseISO, subHours } from 'date-fns';
+import { addHours, parseISO } from 'date-fns';
+import PostSchemas from '../schemas/Post.js';
+import PostsService from '../services/PostsService.js';
+import AuthUtils from '../utils/AuthUtils.js';
+import Validator from '../utils/Validator.js';
+import LikesService from '../services/LikesService.js';
 
 class PostsController {
+
     async create(req, res) {
         const { title, content, summary, available_at } = req.body;
         const { loggedUserId } = res.locals;
-
-        if (hasEmptyField(title, content, summary)) {
-            res.status(400).send("Um ou mais campos faltando");
-            return;
-        }
 
         let adjustedAvailableAt;
         if (available_at) {
@@ -26,78 +21,39 @@ class PostsController {
         }
 
         try {
-            await Post.create({ title, content, summary, available_at: adjustedAvailableAt, user_id: loggedUserId });
-            res.status(201).send("Post publicado");
+            await PostSchemas.create.validate({ title, content, summary, available_at });
+            await PostsService.create({ title, content, summary, available_at: adjustedAvailableAt, user_id: loggedUserId });
+            res.status(201).json({ message: "Post publicado" });
         } catch (err) {
             console.log(err);
-            res.status(500).send("Erro ao publicar post");
+
+            if (err.name === 'ValidationError') {
+                res.status(400).json({ errors: err.errors });
+                return;
+            }
+
+            res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
 
     async get(req, res) {
         let { page } = req.query;
-        page = Number(page);
-
-        if (!Number.isInteger(page) || page <= 0) {
-            res.status(400).json({ error: "O parâmetro 'page' deve ser um inteiro positivo." });
-            return;
-        }
-
-        const limit = 10;
-        const offset = limit * (page - 1);
+        let loggedUserId = AuthUtils.getLoggedUser(req);
 
         try {
-            let loggedUserId = 0;
-            if (req.header('Authorization')) {
-                const token = req.header('Authorization').replace('Bearer ', '');
+            await PostSchemas.page.validate({ page });
+            const posts = await PostsService.get(page, loggedUserId);
 
-                jwt.verify(token, secret, (err, decodedToken) => {
-                    if (!err) {
-                        loggedUserId = decodedToken.id;
-                    }
-                });
+            res.json(posts);
+        } catch (err) {
+            console.log(err);
+
+            if (err.name === 'ValidationError') {
+                res.status(400).json({ errors: err.errors });
+                return;
             }
 
-            const countLikesQuery = `CAST((SELECT COUNT(*) FROM posts_likes AS post_like WHERE post_like.is_deleted = false AND post_like.post_id = post.id) AS INTEGER)`;
-            const posts = await Post.findAll({
-                where: {
-                    is_deleted: false,
-                    available_at: {
-                        [Sequelize.Op.lt]: Sequelize.literal('CURRENT_TIMESTAMP')
-                    }
-                },
-                attributes: {
-                    include: [
-                        [
-                            Sequelize.literal(countLikesQuery),
-                            'likes'
-                        ]
-                    ],
-                    exclude: ['user_id', 'created_at', 'updated_at']
-                },
-                limit,
-                offset,
-                order: [['available_at', 'DESC']],
-                include: {
-                    model: User,
-                    attributes: ['id', 'name']
-                }
-            });
-
-            const modifiedPosts = posts.map(post => {
-                const postJSON = post.toJSON();
-                postJSON.available_at = subHours(new Date(postJSON.available_at), 3);
-                return {
-                    ...postJSON,
-                    allowEdit: loggedUserId === post.user.id,
-                    allowRemove: loggedUserId === post.user.id,
-                };
-            });
-
-            res.status(200).json(modifiedPosts);
-        } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: "Erro ao buscar posts." });
+            res.status(500).json({ error: 'Erro ao obter posts' });
         }
     }
 
@@ -106,45 +62,37 @@ class PostsController {
         const postId = req.params.id;
         const { loggedUserId } = res.locals;
 
-        if (!postId) {
-            res.status(400).send("É necessário indicar o id do post para atualizar");
-            return;
-        }
 
         try {
-            const post = await Post.findOne({ where: { id: postId, is_deleted: false } });
+            await PostSchemas.update.validate({ title, content, summary, postId });
+
+            const post = await PostsService.getById(postId);
 
             if (!post) {
-                res.status(404).send("Postagem não encontrada");
+                res.status(404).json({ error: "Postagem não encontrada" });
                 return;
             }
 
             if (post.user_id != loggedUserId) {
-                res.status(403).send("Não é possível atualizar o post de outro usuário");
+                res.status(403).json({ error: "Não é possível atualizar o post de outro usuário" });
                 return;
             }
 
-            const updatedFields = {};
+            const validFields = Validator.removeEmptyFields({ title, content, summary });
 
-            if (title && title !== "") {
-                updatedFields.title = title;
-            }
-            if (content && content !== "") {
-                updatedFields.content = content;
-            }
-            if (summary && summary !== "") {
-                updatedFields.summary = summary;
-            }
+            await PostsService.update(validFields, postId);
 
-            if (Object.keys(updatedFields).length > 0) {
-                await post.update(updatedFields);
-            }
-
-            res.status(200).send("Post atualizado com sucesso");
+            res.status(200).json({ message: "Post atualizado com sucesso" });
 
         } catch (err) {
             console.log(err);
-            res.status(500).send("Não foi possível atualizar o post");
+
+            if (err.name === 'ValidationError') {
+                res.status(400).json({ errors: err.errors });
+                return;
+            }
+
+            res.status(500).json({ error: "Não foi possível atualizar o post" });
         }
     }
 
@@ -152,36 +100,32 @@ class PostsController {
         const postId = req.params.id;
         const { loggedUserId } = res.locals;
 
-        if (!postId) {
-            res.status(400).send("É necessário indicar o id do post para excluir");
-            return;
-        }
-
-        const t = await sequelize.transaction();
-
         try {
-            const post = await Post.findOne({ where: { id: postId, is_deleted: false }, transaction: t });
+            await PostSchemas.postId.validate({ postId });
+            const post = await PostsService.getById(postId);
 
             if (!post) {
-                res.status(404).send("Postagem não encontrada");
+                res.status(404).json({ error: "Postagem não encontrada" });
                 return;
             }
 
             if (post.user_id != loggedUserId) {
-                res.status(403).send("Não é possível excluir a postagem de outro usuário");
+                res.status(403).json({ error: "Não é possível excluir a postagem de outro usuário" });
                 return;
             }
 
+            await PostsService.remove(postId);
 
-            await post.update({ is_deleted: true }, { transaction: t });
-            await post.destroy({ transaction: t });
-            t.commit();
-            
-            res.status(202).send("Post excluído");
+            res.status(202).json({ message: "Post excluído" });
         } catch (err) {
-            await t.rollback();
             console.log(err);
-            res.status(500).send("Erro ao excluir a postagem");
+
+            if (err.name === 'ValidationError') {
+                res.status(400).json({ errors: err.errors });
+                return;
+            }
+
+            res.status(500).json({ error: "Erro ao excluir a postagem" });
         }
     }
 
@@ -189,31 +133,37 @@ class PostsController {
         const postId = req.params.id;
         const { loggedUserId } = res.locals;
 
-        const t = await sequelize.transaction();
 
         try {
-            const like = await PostLike.findOne({ where: { post_id: postId, user_id: loggedUserId, is_deleted: false }, transaction: t });
+            await PostSchemas.postId.validate({ postId });
+
+            const like = await LikesService.getOne(postId, loggedUserId);
 
             if (like) {
-                res.status(400).send("Este post já foi curtido por este usuário");
+                res.status(400).json({ error: "Este post já foi curtido por este usuário" });
                 return;
             }
 
-            const post = await Post.findOne({ where: {id: postId, is_deleted: false }, transaction: t });
+            const post = await PostsService.getById(postId);
 
             if (!post) {
-                res.status(404).send("Essa publicação não existe");
+                res.status(404).json({ error: "Essa publicação não existe" });
                 return;
             }
 
-            await PostLike.create({ post_id: postId, user_id: loggedUserId }, { transaction: t });
-            await t.commit();
-            res.send("Like registrado");
+            await LikesService.create(postId, loggedUserId);
+
+            res.status(201).json({ message: "Like registrado" });
 
         } catch (err) {
-            await t.rollback();
             console.log(err);
-            res.status(500).send("Não foi possível dar like no post");
+
+            if (err.name === 'ValidationError') {
+                res.status(400).json({ errors: err.errors });
+                return;
+            }
+
+            res.status(500).json({ error: "Não foi possível dar like no post" });
         }
     }
 
@@ -221,33 +171,38 @@ class PostsController {
         const postId = req.params.id;
         const { loggedUserId } = res.locals;
 
+
         const t = await sequelize.transaction();
 
         try {
-            const post = await Post.findOne({ where: {id: postId, is_deleted: false }, transaction: t });
+            await PostSchemas.postId.validate({ postId });
+            const post = await PostsService.getById(postId);
 
             if (!post) {
-                res.status(404).send("Essa publicação não existe");
+                res.status(404).json({ error: "Essa publicação não existe" });
                 return;
             }
 
-            const like = await PostLike.findOne({ where: { post_id: postId, user_id: loggedUserId, is_deleted: false }, transaction: t });
+            const like = await LikesService.getOne(postId, loggedUserId);
 
             if (!like) {
-                res.status(400).send("Este usuário não curtiu este post");
+                res.status(400).json({ error: "Este usuário não curtiu este post" });
                 return;
             }
 
-            await like.update({ is_deleted: true }, { transaction: t });
-            await like.destroy({ transaction: t });
-            await t.commit();
+            await LikesService.remove(like);
 
-            res.status(202).send("Like removido");
+            res.status(202).json({ message: "Like removido" });
 
         } catch (err) {
-            await t.rollback();
             console.log(err);
-            res.status(500).send("Não foi remover like do post");
+
+            if (err.name === 'ValidationError') {
+                res.status(400).json({ errors: err.errors });
+                return;
+            }
+
+            res.status(500).send("Não foi possível remover like do post");
         }
     }
 }
