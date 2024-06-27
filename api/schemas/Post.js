@@ -17,10 +17,16 @@ const schemas = {
         title: yup.string().nullable(),
         content: yup.string().nullable(),
         summary: yup.string().nullable(),
-        postId: yup.number().integer().positive().required()
+        postId: yup.number()
+                .integer('O parâmetro deve ser um número inteiro.')
+                .positive('O parâmetro deve ser um número inteiro positivo.')
+                .required('O id do post é obrigatório.')
     }),
     postId: yup.object({
-        postId: yup.number().integer().positive().required()
+        postId: yup.number()
+                .integer('O parâmetro deve ser um número inteiro.')
+                .positive('O parâmetro deve ser um número inteiro positivo.')
+                .required('O id do post é obrigatório.')
     })
 }
 
