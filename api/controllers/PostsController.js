@@ -150,6 +150,7 @@ export default class PostsController {
             }
 
             await LikesService.create(postId, loggedUserId);
+            await PostsService.incrementLikes(postId);
 
             res.status(201).json({ message: "Like registrado" });
 
@@ -189,6 +190,7 @@ export default class PostsController {
             }
 
             await LikesService.remove(like);
+            await PostsService.decrementLikes(postId);
 
             res.status(202).json({ message: "Like removido" });
 

@@ -19,8 +19,6 @@ class PostService {
         const offset = limit * (page - 1);
 
         try {
-
-            const countLikesQuery = `CAST((SELECT COUNT(*) FROM posts_likes AS post_like WHERE post_like.is_deleted = false AND post_like.post_id = post.id) AS INTEGER)`;
             const posts = await Post.findAll({
                 where: {
                     is_deleted: false,
@@ -29,12 +27,6 @@ class PostService {
                     }
                 },
                 attributes: {
-                    include: [
-                        [
-                            Sequelize.literal(countLikesQuery),
-                            'likes'
-                        ]
-                    ],
                     exclude: ['user_id', 'created_at', 'updated_at']
                 },
                 limit,
@@ -93,6 +85,24 @@ class PostService {
             return true;
         } catch (err) {
             await t.rollback();
+            throw err;
+        }
+    }
+
+    async incrementLikes(postId) {
+        try {
+            await Post.increment('likes', { where: { id: postId } });
+            return true;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async decrementLikes(postId) {
+        try {
+            await Post.decrement('likes', { where: { id: postId } });
+            return true;
+        } catch (err) {
             throw err;
         }
     }
