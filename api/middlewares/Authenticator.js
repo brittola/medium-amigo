@@ -6,7 +6,7 @@ const secret = process.env.JWT_SECRET;
 export default class Authenticator {
     static verifyToken(req, res, next) {
         if (!req.header('Authorization')) {
-            res.status(400).send("Você deve enviar um token de autorização");
+            res.status(400).json({error: "USER MUST BE AUTHENTICATED"});
             return;
         }
 
@@ -14,7 +14,7 @@ export default class Authenticator {
 
         jwt.verify(token, secret, (err, decodedToken) => {
             if (err) {
-                res.status(401).send("Token inválido");
+                res.status(401).json({error: "INVALID TOKEN"});
                 return;
             }
 

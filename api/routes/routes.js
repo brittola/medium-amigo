@@ -1,6 +1,6 @@
 import { Router } from "express";
-import PostRoutes from "./PostRoutes.js";
-import UserRoutes from "./UserRoutes.js";
+import PostRoutes from "./post.js";
+import UserRoutes from "./user.js";
 
 export default class Routes {
     constructor() {
