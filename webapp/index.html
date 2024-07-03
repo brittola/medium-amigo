@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="mediumAmigo">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medium Amigo</title>
+
+  <link rel="stylesheet" href="https://cdn.amigotech.com.br/amigo-apps/doca-ui/min.css">
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <script src="./lib/angular.min.js"></script>
+  <script src="./js/app.js"></script>
+  <script src="./js/controllers.js/post-controller.js"></script>
+</head>
+
+<body>
+  <div class="doca" ng-controller="PostController">
+    <div class="doca-card post-card" ng-repeat="post in posts">
+      <div class="doca-card__content">
+        <h1 class="doca-card__title doca-text--extra-large doca-text--semibold">
+          {{post.title}}
+        </h1>
+        <small class="doca-text--normal doca-text--extra-small">
+          Disponível em: {{post.available_at | date:'dd/MM/yyyy HH:mm'}}
+        </small>
+        <p class="doca-card__subtitle">
+          {{post.summary}}
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

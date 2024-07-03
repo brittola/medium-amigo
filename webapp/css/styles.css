@@ -1,0 +1,22 @@
+* {
+    transition: 400ms;
+}
+
+:root {
+    --light-blue: rgb(223, 243, 255);
+}
+
+div.post-card {
+    max-width: 600px;
+    margin: 16px auto;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--light-blue);
+    }
+}
+
+div.post-card small {
+    display: inline-block;
+    margin-bottom: 8px;
+}

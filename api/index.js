@@ -3,9 +3,12 @@ import sequelize from './database/database.js';
 import dotenv from 'dotenv';
 dotenv.config();
 import Routes from './routes/routes.js';
+import cors from 'cors';
 
 const app = express();
 const routes = new Routes();
+
+app.use(cors());
 
 app.use(express.json());
 
