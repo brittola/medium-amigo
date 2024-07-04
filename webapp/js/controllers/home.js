@@ -4,7 +4,7 @@ angular.module('mediumAmigo').controller('HomeController', function($scope, $win
 
     PostService.get($scope.page)
         .success(data => {
-            console.log(data);
+            console.log(data.data);
             $scope.posts = data.data
         })
         .error(data => console.log(data));
