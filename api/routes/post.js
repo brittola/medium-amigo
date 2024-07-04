@@ -13,6 +13,7 @@ export default class PostRoutes {
 
     setup() {
         this.router.get('/', Validator.validate(PostSchemas.get), this.PostsController.get);
+        this.router.get('/:id', Validator.validate(PostSchemas.getById), this.PostsController.getById);
         this.router.post('/', Authenticator.verifyToken, Validator.validate(PostSchemas.create), this.PostsController.create);
         this.router.put('/:id', Authenticator.verifyToken, Validator.validate(PostSchemas.update), this.PostsController.update);
         this.router.delete('/:id', Authenticator.verifyToken, Validator.validate(PostSchemas.delete), this.PostsController.remove);

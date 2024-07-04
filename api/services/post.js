@@ -49,6 +49,38 @@ class PostService {
         return modifiedPosts;
     }
 
+    async getById(id, loggedUserId) {
+        const post = await Post.findOne({
+            where: {
+                id,
+                is_deleted: false,
+                available_at: {
+                    [Sequelize.Op.lt]: Sequelize.literal('CURRENT_TIMESTAMP')
+                }
+            },
+            attributes: {
+                exclude: ['user_id', 'created_at', 'updated_at']
+            },
+            include: {
+                model: User,
+                attributes: ['id', 'name']
+            }
+        });
+
+        if (!post) {
+            throw new Error("POST NOT FOUND");
+        }
+
+        const postJSON = post.toJSON();
+        postJSON.available_at = subHours(new Date(postJSON.available_at), 3);
+
+        return {
+            ...postJSON,
+            allowEdit: loggedUserId === post.user.id,
+            allowRemove: loggedUserId === post.user.id,
+        };
+    }
+
     async remove(id, loggedUserId, transaction) {
         const post = await Post.findOne({ where: { id, user_id: loggedUserId, is_deleted: false }, transaction });
         if (!post) {

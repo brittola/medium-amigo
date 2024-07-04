@@ -9,6 +9,14 @@ const schemas = {
                 .default(1)
         }).noUnknown()
     },
+    getById: {
+        params: yup.object({
+            id: yup.number()
+                .integer('O parâmetro deve ser um número inteiro.')
+                .positive('O parâmetro deve ser um número inteiro positivo.')
+                .required('O id do post é obrigatório.')
+        }).noUnknown()
+    },
     create: {
         body: yup.object({
             title: yup.string().required('O título é obrigatório.'),

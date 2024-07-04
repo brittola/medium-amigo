@@ -13,6 +13,7 @@ export default class PostController extends BaseController {
 
         this.create = this.create.bind(this);
         this.get = this.get.bind(this);
+        this.getById = this.getById.bind(this);
         this.update = this.update.bind(this);
         this.remove = this.remove.bind(this);
         this.like = this.like.bind(this);
@@ -42,6 +43,20 @@ export default class PostController extends BaseController {
             this.handleResponse(posts, res);
         } catch (err) {
             console.log(err, "GET ERROR");
+            this.handleError(err, res);
+        }
+    }
+
+    async getById(req, res) {
+        const { id } = req.filter;
+        const loggedUserId = AuthUtils.getLoggedUser(req);
+
+        try {
+            const post = await PostService.getById(id, loggedUserId);
+
+            this.handleResponse(post, res);
+        } catch (err) {
+            console.log(err, "GET BY ID ERROR");
             this.handleError(err, res);
         }
     }
