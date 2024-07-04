@@ -1,8 +1,8 @@
-angular.module('mediumAmigo').controller('PostController', function($scope, $http, PostService){
+angular.module('mediumAmigo').controller('PostController', function($scope, PostService){
     $scope.posts = [];
     $scope.page = 1;
 
-    PostService.get(1)
+    PostService.get($scope.page)
         .success(data => {
             $scope.posts = data.data
         })
