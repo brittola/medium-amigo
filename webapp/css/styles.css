@@ -1,22 +1,37 @@
 * {
     transition: 400ms;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 :root {
-    --light-blue: rgb(223, 243, 255);
+    --light-gray: rgb(248, 248, 248);
 }
 
 div.post-card {
     max-width: 600px;
-    margin: 16px auto;
     cursor: pointer;
+    position: relative;
 
     &:hover {
-        background-color: var(--light-blue);
+        background-color: var(--light-gray);
     }
 }
 
-div.post-card small {
-    display: inline-block;
-    margin-bottom: 8px;
+div.post-card div.options-group {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+div.post-card div.options-group div.doca-dropdown-menu {
+    position: absolute;
+    top: 2rem;
+    right: 0px;
+}
+
+div.doca-dropdown-menu.hide {
+    opacity: 0;
+    visibility: hidden;
 }
