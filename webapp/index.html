@@ -7,14 +7,18 @@
   <title>Medium Amigo</title>
 
   <link rel="stylesheet" href="./css/doca-ui.css">
-  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/post-card.css">
 
   <script src="./lib/angular.min.js"></script>
   <script src="./js/app.js"></script>
 
-  <script src="./js/controllers/post.js"></script>
+  <script src="./js/controllers/home.js"></script>
 
   <script src="./js/services/post.js"></script>
+
+  <script src="./js/directives/post-card.js"></script>
+  <script src="./js/directives/app-header.js"></script>
 
   <script src="./js/values/config.js"></script>
 
@@ -24,61 +28,10 @@
 </head>
 
 <body>
-  <div class="doca" ng-controller="PostController">
-    <div class="doca-page">
-
-      <div class="doca-page__header doca-mt-2">
-        <div class="doca-page__header__content doca-flex doca-justify-between doca-flex-row doca-items-center">
-          <h1 class="doca-page__header__title doca-text--semibold">Medium Amigo</h1>
-          <div ng-if="!loggedUser" class="doca-button-group">
-            <button>
-              Login
-            </button>
-            <button>
-              Cadastrar
-            </button>
-          </div>
-            <p ng-if="loggedUser" class="doca-text--normal">
-              Olá, {{loggedUser.name | FirstNameFilter | CapitalizeFilter}}
-            </p>
-        </div>
-      </div>
-
-      <div class="doca-card doca-my-5 doca-mx-auto post-card" ng-repeat="post in posts track by post.id">
-        <div class="doca-card__content">
-          <h1 class="doca-card__title doca-text--extra-large doca-text--semibold doca-mb-1">
-            {{post.title}}
-          </h1>
-          <p class="doca-text--normal doca-text--extra-small doca-mb-4">
-            Publicado por {{post.user.name}} | {{post.available_at | date:'dd/MM/yyyy HH:mm'}}
-          </p>
-          <p class="doca-card__subtitle doca-mb-8">
-            {{post.summary | SummaryFilter}}
-          </p>
-          <span>
-            <i class="doca-icon doca-icon__thumbs-up doca-icon--solid"></i> {{post.likes}}
-          </span>
-        </div>
-        <div class="options-group" ng-if="post.allowEdit && post.allowRemove">
-          <button class="doca-button doca-button--tertiary" ng-click="setShowOptions(post.id)">
-            <i class="doca-icon doca-icon__ellipsis-v"></i>
-          </button>
-          <div ng-class="{'hide': showOptions != post.id, 'doca-dropdown-menu': true }" ng-mouseleave="setShowOptions(null)">
-            <ul class="doca-dropdown__list">
-              <li class="doca-dropdown__list__group">
-                Ações
-              </li>
-              <li class="doca-dropdown__list__item doca-dropdown__list__item--action">
-                <i class="doca-icon doca-icon__pen doca-icon--solid"></i> Editar
-              </li>
-              <li class="doca-dropdown__list__item doca-dropdown__list__item--action">
-                <i class="doca-icon doca-icon__trash doca-icon--solid"></i> Excluir
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
+  <div class="doca">
+    <div class="doca-page" ng-controller="HomeController">
+      <app-header></app-header>
+      <post-card ng-repeat="post in posts track by post.id"></post-card>
     </div>
   </div>
 

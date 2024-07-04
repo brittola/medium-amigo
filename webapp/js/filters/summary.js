@@ -1,6 +1,6 @@
-angular.module('mediumAmigo').filter('SummaryFilter', function(ConfigValue) {
-    return function(input) {
-        if (input.length < ConfigValue.summaryMaxLength) return input;
-        return input.substring(0, ConfigValue.summaryMaxLength) + '...';
+angular.module('mediumAmigo').filter('SummaryFilter', function() {
+    return function(input, maxLength=5) {
+        if (input.length < maxLength) return input;
+        return input.substring(0, maxLength) + '...';
     }
 });

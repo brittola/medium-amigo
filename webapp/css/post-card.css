@@ -1,22 +1,7 @@
-* {
-    transition: 400ms;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    --light-gray: rgb(248, 248, 248);
-}
-
 div.post-card {
     max-width: 600px;
     cursor: pointer;
     position: relative;
-
-    &:hover {
-        background-color: var(--light-gray);
-    }
 }
 
 div.post-card div.options-group {
@@ -27,11 +12,11 @@ div.post-card div.options-group {
 
 div.post-card div.options-group div.doca-dropdown-menu {
     position: absolute;
-    top: 2rem;
+    top: 1.8rem;
     right: 0px;
 }
 
-div.doca-dropdown-menu.hide {
+div.post-card div.doca-dropdown-menu.hide {
     opacity: 0;
     visibility: hidden;
 }

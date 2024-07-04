@@ -1,0 +1,36 @@
+<div class="doca-card doca-my-5 doca-mx-auto post-card" ng-mouseleave="setShowOptions(null)">
+    <div class="doca-card__content">
+        <h1 class="doca-card__title doca-text--extra-large doca-text--semibold doca-mb-1">
+            {{post.title}}
+        </h1>
+        <p class="doca-text--normal doca-text--extra-small doca-mb-4">
+            Publicado por {{post.user.name}} | {{post.available_at | date:'dd/MM/yyyy HH:mm'}}
+        </p>
+        <p class="doca-card__subtitle doca-mb-8">
+            {{post.summary | SummaryFilter:200}}
+        </p>
+        <span>
+            <i class="doca-icon doca-icon__thumbs-up doca-icon--solid"></i> {{post.likes}}
+        </span>
+    </div>
+    <div class="options-group" ng-if="post.allowEdit && post.allowRemove">
+        <button class="doca-button doca-button--tertiary" ng-click="setShowOptions(post.id)">
+            <i class="doca-icon doca-icon__ellipsis-v"></i>
+        </button>
+        <div class="doca-dropdown-menu"
+            ng-hide="showOptions !== post.id"
+            ng-mouseleave="setShowOptions(null)">
+            <ul class="doca-dropdown__list">
+                <li class="doca-dropdown__list__group">
+                    Ações
+                </li>
+                <li class="doca-dropdown__list__item doca-dropdown__list__item--action">
+                    <i class="doca-icon doca-icon__pen doca-icon--solid"></i> Editar
+                </li>
+                <li class="doca-dropdown__list__item doca-dropdown__list__item--action">
+                    <i class="doca-icon doca-icon__trash doca-icon--solid"></i> Excluir
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

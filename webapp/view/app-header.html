@@ -1,0 +1,24 @@
+<div class="doca-page__header doca-mt-2">
+    <div class="doca-page__header__content doca-flex doca-justify-between doca-flex-row doca-items-center">
+        <h1 class="doca-page__header__title doca-text--semibold">Medium Amigo</h1>
+        <div ng-if="!loggedUser" class="doca-button-group">
+            <button>
+                Login
+            </button>
+            <button>
+                Cadastrar
+            </button>
+        </div>
+        <a ng-if="loggedUser" class="doca-link doca-text--small" style="cursor: pointer;">
+            Minhas publicações
+        </a>
+        <div ng-if="loggedUser" class="doca-flex doca-justify-center doca-items-center">
+            <p class="doca-text--normal doca-mr-2">
+                Olá, {{loggedUser.name | FirstNameFilter | CapitalizeFilter}}
+            </p>
+            <button class="doca-button doca-button--secondary">
+                Criar publicação
+            </button>
+        </div>
+    </div>
+</div>
