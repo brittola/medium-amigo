@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import { Sequelize } from "sequelize";
 import { subHours } from 'date-fns';
 import { addHours, parseISO } from 'date-fns';
+import PostLike from "../models/PostLike.js";
 
 class PostService {
     async create(data) {
@@ -25,7 +26,7 @@ class PostService {
                 }
             },
             attributes: {
-                exclude: ['user_id', 'created_at', 'updated_at']
+                exclude: ['user_id', 'created_at', 'updated_at', 'content']
             },
             limit,
             offset,
@@ -36,15 +37,24 @@ class PostService {
             }
         });
 
-        const modifiedPosts = posts.map(post => {
+        const modifiedPosts = await Promise.all(posts.map(async (post) => {
             const postJSON = post.toJSON();
             postJSON.available_at = subHours(new Date(postJSON.available_at), 3);
+            
+            const like = await PostLike.findOne({
+                where: {
+                    post_id: post.id,
+                    user_id: loggedUserId
+                }
+            });
+        
             return {
                 ...postJSON,
                 allowEdit: loggedUserId === post.user.id,
                 allowRemove: loggedUserId === post.user.id,
+                is_liked: !!like
             };
-        });
+        }));
 
         return modifiedPosts;
     }
@@ -59,7 +69,7 @@ class PostService {
                 }
             },
             attributes: {
-                exclude: ['user_id', 'created_at', 'updated_at']
+                exclude: ['user_id', 'created_at', 'updated_at', 'summary']
             },
             include: {
                 model: User,
@@ -74,10 +84,13 @@ class PostService {
         const postJSON = post.toJSON();
         postJSON.available_at = subHours(new Date(postJSON.available_at), 3);
 
+        const like = await PostLike.findOne({where: {post_id: post.id, user_id: loggedUserId, is_deleted: false}});
+
         return {
             ...postJSON,
             allowEdit: loggedUserId === post.user.id,
             allowRemove: loggedUserId === post.user.id,
+            is_liked: !!like
         };
     }
 
