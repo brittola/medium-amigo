@@ -1,4 +1,4 @@
-angular.module('mediumAmigo').controller('HomeController', function ($scope, $window, PostService) {
+angular.module('mediumAmigo').controller('HomeController', function ($scope, $rootScope, $window, PostService) {
     $scope.posts = [];
     $scope.page = 1;
 
@@ -12,6 +12,35 @@ angular.module('mediumAmigo').controller('HomeController', function ($scope, $wi
     $scope.setShowOptions = function (post_id, $event) {
         $event.stopPropagation();
         $scope.showOptions = $scope.showOptions === post_id ? null : post_id;
+    }
+
+    $scope.handleLike = function(post, e) {
+        e.stopPropagation();
+
+        if ($rootScope.loggedUser === null) {
+            $rootScope.openLoginModal();
+        }
+
+        if (post.is_liked) {
+            PostService.unlike(post.id)
+                .success(function(data) {
+                    post.is_liked = false;
+                    post.likes--;
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                });
+            return;
+        }
+
+        PostService.like(post.id)
+            .success(function(data) {
+                post.is_liked = true;
+                post.likes++;
+            })
+            .error(function(data) {
+                console.log('Error: ' + data);
+            });
     }
 
     $scope.onScroll = function () {

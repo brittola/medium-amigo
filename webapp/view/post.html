@@ -11,7 +11,7 @@
       {{post.content}}
     </p>
     <div class="doca-flex post-actions doca-justify-between doca-items-center">
-      <span style="cursor: pointer;">
+      <span ng-click="handleLike(post)" style="cursor: pointer;">
         <i ng-class="{'doca-icon--solid doca-text--danger': post.is_liked}" class="doca-icon doca-icon__heart"></i>
         {{post.likes}}
       </span>

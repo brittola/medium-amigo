@@ -24,6 +24,22 @@ angular.module('mediumAmigo').factory('PostService', function($rootScope, $http,
                     Authorization
                 }
             });
+        },
+        like: function(id) {
+            const Authorization = $rootScope.loggedUser ? `Bearer ${$rootScope.loggedUser.token}` : '';
+            return $http.post(`${ConfigValue.baseUrl}/posts/like/${id}`, {}, {
+                headers: {
+                    Authorization
+                }
+            });
+        },
+        unlike: function(id) {
+            const Authorization = $rootScope.loggedUser ? `Bearer ${$rootScope.loggedUser.token}` : '';
+            return $http.delete(`${ConfigValue.baseUrl}/posts/like/${id}`, {
+                headers: {
+                    Authorization
+                }
+            });
         }
     }
 });

@@ -5,6 +5,7 @@ const secret = process.env.JWT_SECRET;
 
 export default class Authenticator {
     static verifyToken(req, res, next) {
+        console.log(req.header('Authorization'));
         if (!req.header('Authorization')) {
             res.status(400).json({error: "USER MUST BE AUTHENTICATED"});
             return;
