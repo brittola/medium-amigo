@@ -6,6 +6,11 @@ angular.module('mediumAmigo', ["ngRoute", 'ui.bootstrap']).run(function($rootSco
 
     $rootScope.loggedUser = JSON.parse(localStorage.getItem('loggedUser')) || null;
 
+    $rootScope.logout = function() {
+        localStorage.removeItem('loggedUser');
+        location.reload();
+    };
+
     $rootScope.openLoginModal = function() {
         const modalInstance = $modal.open({
             templateUrl: 'view/modal-login.html',

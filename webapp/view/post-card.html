@@ -1,4 +1,4 @@
-<div ng-click="goTo('#/post/' + post.id)" class="doca-card doca-my-5 doca-mx-auto post-card" ng-mouseleave="setShowOptions(null)">
+<div ng-click="goTo('#/post/' + post.id)" class="doca-card doca-my-5 doca-mx-auto post-card" ng-mouseleave="setShowOptions(null, $event)">
     <div class="doca-card__content">
         <h1 class="doca-card__title doca-text--extra-large doca-text--semibold doca-mb-1">
             {{post.title}}
@@ -16,7 +16,7 @@
         </span>
     </div>
     <div class="options-group" ng-if="post.allowEdit && post.allowRemove">
-        <button class="doca-button doca-button--tertiary" ng-click="setShowOptions(post.id)">
+        <button class="doca-button doca-button--tertiary" ng-click="setShowOptions(post.id, $event)">
             <i class="doca-icon doca-icon__ellipsis-v"></i>
         </button>
         <div class="doca-dropdown-menu"

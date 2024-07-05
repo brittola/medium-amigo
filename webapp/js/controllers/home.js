@@ -1,4 +1,4 @@
-angular.module('mediumAmigo').controller('HomeController', function($scope, $window, PostService){
+angular.module('mediumAmigo').controller('HomeController', function ($scope, $window, PostService) {
     $scope.posts = [];
     $scope.page = 1;
 
@@ -9,17 +9,18 @@ angular.module('mediumAmigo').controller('HomeController', function($scope, $win
         })
         .error(data => console.log(data));
 
-    $scope.setShowOptions = function(post_id) {
+    $scope.setShowOptions = function (post_id, $event) {
+        $event.stopPropagation();
         $scope.showOptions = $scope.showOptions === post_id ? null : post_id;
     }
 
-    $scope.onScroll = function() {
+    $scope.onScroll = function () {
         var scrollTop = $window.scrollY;
         var windowHeight = $window.innerHeight;
         var scrollHeight = document.documentElement.scrollHeight;
-    
+
         if (scrollTop + windowHeight >= scrollHeight) {
-    
+
             PostService.get(++$scope.page)
                 .success(data => {
                     if (data.data.length === 0) {
@@ -31,10 +32,10 @@ angular.module('mediumAmigo').controller('HomeController', function($scope, $win
                 .error(data => console.log(data));
         }
     };
-    
+
     angular.element($window).on('scroll', $scope.onScroll);
-    
-    $scope.$on('$destroy', function() {
+
+    $scope.$on('$destroy', function () {
         angular.element($window).off('scroll', $scope.onScroll);
     });
 });

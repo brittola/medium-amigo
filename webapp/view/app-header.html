@@ -27,8 +27,12 @@
             <p class="doca-text--normal doca-mr-2">
                 Olá, {{loggedUser.name | FirstNameFilter | CapitalizeFilter}}
             </p>
-            <button class="doca-button doca-button--secondary">
+            <button class="doca-button doca-button--secondary doca-mr-2">
                 Criar publicação
+            </button>
+            <button class="doca-button doca-button--warning" ng-click="logout()">
+                <i class="doca-icon doca-icon__sign-in-alt"></i>
+                Sair
             </button>
         </div>
     </div>
