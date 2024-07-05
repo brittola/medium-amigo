@@ -17,6 +17,22 @@ angular.module('mediumAmigo').factory('PostService', function($rootScope, $http,
                 }
             });
         },
+        create: function(post) {
+            const Authorization = $rootScope.loggedUser ? `Bearer ${$rootScope.loggedUser.token}` : '';
+            return $http.post(`${ConfigValue.baseUrl}/posts`, post, {
+                headers: {
+                    Authorization
+                }
+            });
+        },
+        update: function(post) {
+            const Authorization = $rootScope.loggedUser ? `Bearer ${$rootScope.loggedUser.token}` : '';
+            return $http.put(`${ConfigValue.baseUrl}/posts/${post.id}`, post, {
+                headers: {
+                    Authorization
+                }
+            });
+        },
         delete: function(id) {
             const Authorization = $rootScope.loggedUser ? `Bearer ${$rootScope.loggedUser.token}` : '';
             return $http.delete(`${ConfigValue.baseUrl}/posts/${id}`, {

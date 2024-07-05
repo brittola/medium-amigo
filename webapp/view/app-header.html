@@ -27,7 +27,7 @@
             <p class="doca-text--normal doca-mr-2">
                 Olá, {{loggedUser.name | FirstNameFilter | CapitalizeFilter}}
             </p>
-            <button class="doca-button doca-button--secondary doca-mr-2">
+            <button ng-click="openPostModal(null, 'Criar', null, $event)" class="doca-button doca-button--secondary doca-mr-2">
                 Criar publicação
             </button>
             <button class="doca-button doca-button--warning" ng-click="logout()">

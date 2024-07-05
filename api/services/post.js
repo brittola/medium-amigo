@@ -1,7 +1,6 @@
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import { Sequelize } from "sequelize";
-import { subHours } from 'date-fns';
 import { addHours, parseISO } from 'date-fns';
 import PostLike from "../models/PostLike.js";
 
@@ -26,7 +25,7 @@ class PostService {
                 }
             },
             attributes: {
-                exclude: ['user_id', 'created_at', 'updated_at', 'content']
+                exclude: ['user_id', 'created_at', 'updated_at']
             },
             limit,
             offset,
@@ -39,7 +38,7 @@ class PostService {
 
         const modifiedPosts = await Promise.all(posts.map(async (post) => {
             const postJSON = post.toJSON();
-            postJSON.available_at = subHours(new Date(postJSON.available_at), 3);
+            // postJSON.available_at = subHours(new Date(postJSON.available_at), 3);
             
             const like = await PostLike.findOne({
                 where: {
@@ -69,7 +68,7 @@ class PostService {
                 }
             },
             attributes: {
-                exclude: ['user_id', 'created_at', 'updated_at', 'summary']
+                exclude: ['user_id', 'created_at', 'updated_at']
             },
             include: {
                 model: User,
@@ -82,7 +81,7 @@ class PostService {
         }
 
         const postJSON = post.toJSON();
-        postJSON.available_at = subHours(new Date(postJSON.available_at), 3);
+        // postJSON.available_at = subHours(new Date(postJSON.available_at), 3);
 
         const like = await PostLike.findOne({where: {post_id: post.id, user_id: loggedUserId, is_deleted: false}});
 

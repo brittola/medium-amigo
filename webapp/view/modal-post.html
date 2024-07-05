@@ -1,0 +1,45 @@
+<div class="doca">
+    <div class="modal-header doca-flex doca-justify-between doca-items-center">
+        <h1 class="modal-title doca-text--semibold doca-text--large">{{mode}} publicação</h1>
+        <button ng-click="dismiss()" class="doca-button doca-button--tertiary">
+            <i class="doca-icon doca-icon__x"></i>
+        </button>
+    </div>
+    <div class="modal-body" style="padding-top: 0px;">
+        <div ng-show="errorMessage.length > 0" class="doca-alert doca-alert--info doca-alert--danger doca-mb-5">
+            <span class="doca-alert__text">
+                {{errorMessage}}
+            </span>
+        </div>
+        <form>
+            <div class="doca-form__field doca-form__field--required doca-mb-5">
+                <label class="doca-form__label">Título</label>
+                <div class="doca-form-control__icon-container doca-form-control__icon-container--left">
+                    <i class="doca-icon doca-icon__at"></i>
+                    <input name="title" class="doca-form-control" ng-required="true" type="text"
+                        ng-model="post.title" />
+                </div>
+            </div>
+            <div class="doca-form__field doca-form__field--required">
+                <label class="doca-form__label">
+                    Resumo
+                </label>
+                <textarea class="doca-form-control" maxlength="250" ng-model="post.summary" placeholder="Explique em poucas palavras a sua publicação"
+                    rows="4"></textarea>
+            </div>
+            <div class="doca-form__field doca-form__field--required">
+                <label class="doca-form__label">
+                    Conteúdo
+                </label>
+                <textarea class="doca-form-control" ng-model="post.content" placeholder="Desenvolva suas ideias aqui"
+                    rows="10"></textarea>
+            </div>
+            <div class="doca-flex doca-items-center doca-justify-center">
+                <button ng-click="ok()" class="doca-button doca-button--info">
+                    <i class="doca-icon doca-icon__sign-in-alt"></i>
+                    {{mode === 'Criar' ? 'Publicar' : 'Atualizar'}}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

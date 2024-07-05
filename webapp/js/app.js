@@ -61,4 +61,43 @@ angular.module('mediumAmigo', ["ngRoute", 'ui.bootstrap']).run(function($rootSco
         });
     };
 
+    $rootScope.openPostModal = function(post, mode, is_home, e) {
+        try {
+            e.stopPropagation();
+        } catch (error) {
+            e.cancelBubble = true;
+        }
+
+        if (!post) {
+            post = {
+                title: '',
+                content: '',
+                summary: ''
+            }
+        }
+
+        console.log(post);
+
+        const modalInstance = $modal.open({
+            templateUrl: 'view/modal-post.html',
+            controller: 'ModalPostController',
+            resolve: {
+                mode: function() {
+                    return mode;
+                },
+                post: function() {
+                    return post;
+                },
+                is_home: function() {
+                    return is_home;
+                }
+            }
+        });
+
+        modalInstance.result.then(function() {
+        }).catch(function() {
+            console.log('Modal dismissed');
+        });
+    }
+
 });

@@ -15,6 +15,7 @@ export default class UsersController extends BaseController {
         try {
             const hash = bcrypt.hashSync(req.data.password, 10);
             req.data.password = hash;
+            
             const response = await UserService.create(req.data);
 
             this.handleResponse(response, res);

@@ -1,8 +1,33 @@
 <div ng-click="goTo('#/post/' + post.id)" class="doca-card doca-my-5 doca-mx-auto post-card" ng-mouseleave="setShowOptions(null, $event)">
     <div class="doca-card__content">
-        <h1 class="doca-card__title doca-text--extra-large doca-text--semibold doca-mb-1">
-            {{post.title}}
-        </h1>
+        <div class="doca-flex doca-justify-between">
+            <h1 class="doca-card__title doca-mr-4 doca-text--extra-large doca-text--semibold doca-mb-1">
+                {{post.title}}
+            </h1>
+
+            <div ng-if="post.allowEdit && post.allowRemove" class="doca-relative">
+                <button class="doca-button doca-button--tertiary" ng-click="setShowOptions(post.id, $event)">
+                    <i class="doca-icon doca-icon__ellipsis-v doca-icon--large"></i>
+                </button>
+
+                <div class="doca-dropdown-menu"
+                    style="position: absolute; right: 0"
+                    ng-hide="showOptions !== post.id"
+                    ng-mouseleave="setShowOptions(null)">
+                    <ul class="doca-dropdown__list">
+                        <li class="doca-dropdown__list__group">
+                            Ações
+                        </li>
+                        <li ng-click="openPostModal(post, 'Editar', true, $event)" class="doca-dropdown__list__item doca-dropdown__list__item--action">
+                            <i class="doca-icon doca-icon__pen doca-icon--solid"></i> Editar
+                        </li>
+                        <li ng-click="openDeleteModal(post.id, $event)" class="doca-dropdown__list__item doca-dropdown__list__item--action">
+                            <i class="doca-icon doca-icon__trash doca-icon--solid"></i> Excluir
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <p class="doca-text--normal doca-text--extra-small doca-mb-4">
             Publicado por {{post.user.name}} | {{post.available_at | date:'dd/MM/yyyy'}} às {{post.available_at | date:'HH:mm'}}
         </p>
@@ -14,25 +39,5 @@
             ng-class="{'doca-icon--solid doca-text--danger': post.is_liked}"
             class="doca-icon doca-icon__heart"></i> {{post.likes}}
         </span>
-    </div>
-    <div class="options-group" ng-if="post.allowEdit && post.allowRemove">
-        <button class="doca-button doca-button--tertiary" ng-click="setShowOptions(post.id, $event)">
-            <i class="doca-icon doca-icon__ellipsis-v"></i>
-        </button>
-        <div class="doca-dropdown-menu"
-            ng-hide="showOptions !== post.id"
-            ng-mouseleave="setShowOptions(null)">
-            <ul class="doca-dropdown__list">
-                <li class="doca-dropdown__list__group">
-                    Ações
-                </li>
-                <li class="doca-dropdown__list__item doca-dropdown__list__item--action">
-                    <i class="doca-icon doca-icon__pen doca-icon--solid"></i> Editar
-                </li>
-                <li ng-click="openDeleteModal(post.id, true, $event)" class="doca-dropdown__list__item doca-dropdown__list__item--action">
-                    <i class="doca-icon doca-icon__trash doca-icon--solid"></i> Excluir
-                </li>
-            </ul>
-        </div>
     </div>
 </div>

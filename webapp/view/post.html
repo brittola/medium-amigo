@@ -16,7 +16,7 @@
         {{post.likes}}
       </span>
       <div ng-if="post.allowEdit && post.allowRemove" class="doca-button-group author-actions">
-        <button>
+        <button ng-click="openPostModal(post, 'Editar', false, $event)">
           Editar
         </button>
         <button ng-click="openDeleteModal(post.id, false, $event)">
