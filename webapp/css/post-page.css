@@ -1,0 +1,13 @@
+div.post p, div.post h1 {
+    max-width: 720px;
+    margin: auto;
+}
+
+div.post p.text {
+    text-align: justify;
+}
+
+div.post div.post-actions {
+    max-width: 720px;
+    margin: auto;
+}

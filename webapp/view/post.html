@@ -1,0 +1,28 @@
+<div class="doca-card doca-py-5 doca-px-5">
+  <div class="post doca-card__content">
+    <p class="doca-card__title doca-text--extra-large doca-text--semibold doca-mb-5">
+      {{post.title}}
+    </p>
+    <p class="doca-card__subtitle doca-mb-8">
+      Publicado por {{post.user.name}} em {{post.available_at | date: 'dd/MM/yyyy'}} às {{post.available_at | date:
+      'HH:mm'}}
+    </p>
+    <p class="text doca-text--normal doca-mb-8">
+      {{post.content}}
+    </p>
+    <div class="doca-flex post-actions doca-justify-between doca-items-center">
+      <span style="cursor: pointer;">
+        <i ng-class="{'doca-icon--solid doca-text--danger': post.is_liked}" class="doca-icon doca-icon__heart"></i>
+        {{post.likes}}
+      </span>
+      <div ng-if="post.allowEdit && post.allowRemove" class="doca-button-group author-actions">
+        <button>
+          Editar
+        </button>
+        <button>
+          Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
