@@ -19,4 +19,17 @@ angular.module('mediumAmigo', ["ngRoute", 'ui.bootstrap']).run(function($rootSco
         });
     }
 
+    $rootScope.openSignupModal = function() {
+        const modalInstance = $modal.open({
+            templateUrl: 'view/modal-signup.html',
+            controller: 'modalSignupController'
+        });
+
+        modalInstance.result.then(function() {
+            $rootScope.openLoginModal();
+        }).catch(function() {
+            console.log('Modal dismissed');
+        });
+    }
+
 });

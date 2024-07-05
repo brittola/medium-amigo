@@ -1,6 +1,6 @@
 <div class="doca">
     <div class="modal-header doca-flex doca-justify-between doca-items-center">
-        <h1 class="modal-title doca-text--semibold doca-text--large">Login</h1>
+        <h1 class="modal-title doca-text--semibold doca-text--large">Cadastrar Usuário</h1>
         <button ng-click="dismiss()" class="doca-button doca-button--tertiary">
             <i class="doca-icon doca-icon__x"></i>
         </button>
@@ -13,11 +13,19 @@
         </div>
         <form>
             <div class="doca-form__field doca-form__field--required doca-mb-5">
+                <label class="doca-form__label">Nome</label>
+                <div class="doca-form-control__icon-container doca-form-control__icon-container--left">
+                    <i class="doca-icon doca-icon__at"></i>
+                    <input name="name" class="doca-form-control" ng-required="true" type="text"
+                        ng-model="newUser.name" />
+                </div>
+            </div>
+            <div class="doca-form__field doca-form__field--required doca-mb-5">
                 <label class="doca-form__label">E-mail</label>
                 <div class="doca-form-control__icon-container doca-form-control__icon-container--left">
                     <i class="doca-icon doca-icon__at"></i>
                     <input name="email" class="doca-form-control" ng-required="true" type="email"
-                        ng-model="user.email" />
+                        ng-model="newUser.email" />
                 </div>
             </div>
             <div class="doca-form__field doca-form__field--required doca-mb-5">
@@ -25,13 +33,13 @@
                 <div class="doca-form-control__icon-container doca-form-control__icon-container--left">
                     <i class="doca-icon doca-icon__lock"></i>
                     <input name="password" class="doca-form-control" ng-required="true" type="password"
-                        ng-model="user.password" />
+                        ng-model="newUser.password" />
                 </div>
             </div>
             <div class="doca-flex doca-items-center doca-justify-center">
-                <button class="doca-button doca-button--info" ng-click="sendLogin($event)">
+                <button class="doca-button doca-button--info" ng-click="sendSignup($event)">
                     <i class="doca-icon doca-icon__sign-in-alt"></i>
-                    Login
+                    Cadastrar
                 </button>
             </div>
         </form>

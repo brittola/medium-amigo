@@ -1,6 +1,6 @@
-angular.module('mediumAmigo').controller('modalLoginController', function($scope, $rootScope, $modalInstance, UserService) {
-
-    $scope.user = {
+angular.module('mediumAmigo').controller('modalSignupController', function($scope, $rootScope, $modalInstance, UserService) {
+    $scope.newUser = {
+        name: '',
         email: '',
         password: ''
     }
@@ -15,24 +15,22 @@ angular.module('mediumAmigo').controller('modalLoginController', function($scope
         $modalInstance.dismiss();
     }
 
-    $scope.sendLogin = function(e) {
+    $scope.sendSignup = function(e) {
         e.preventDefault();
 
-        Object.keys($scope.user).forEach(function(key) {
-            $scope.user[key] = $scope.user[key].trim();
+        Object.keys($scope.newUser).forEach(function(key) {
+            $scope.newUser[key] = $scope.newUser[key].trim();
 
-            console.log($scope.user[key]);
+            console.log($scope.newUser[key]);
 
-            if ($scope.user[key] === '') {
+            if ($scope.newUser[key] === '') {
                 $scope.errorMessage = 'Preencha todos os campos.';
             }
         });
 
-        UserService.login($scope.user)
+        UserService.signup($scope.newUser)
             .success(function(data) {
                 console.log(data);
-                $rootScope.loggedUser = data.data;
-                localStorage.setItem('loggedUser', JSON.stringify(data.data));
                 $scope.close();
             })
             .error(function(data) {
