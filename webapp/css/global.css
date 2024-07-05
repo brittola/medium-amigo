@@ -4,3 +4,10 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+.nav,
+.pagination,
+.carousel,
+.panel-title a {
+    cursor: pointer;
+}

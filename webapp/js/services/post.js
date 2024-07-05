@@ -1,11 +1,21 @@
-angular.module('mediumAmigo').factory('PostService', function($http, ConfigValue){
+angular.module('mediumAmigo').factory('PostService', function($rootScope, $http, ConfigValue){
 
     return {
         get: function(page) {
-            return $http.get(`${ConfigValue.baseUrl}/posts?page=${page}`);
+            const Authorization = $rootScope.loggedUser ? `Bearer ${$rootScope.loggedUser.token}` : '';
+            return $http.get(`${ConfigValue.baseUrl}/posts?page=${page}`, {
+                headers: {
+                    Authorization
+                }
+            });
         },
         getById: function(id) {
-            return $http.get(`${ConfigValue.baseUrl}/posts/${id}`);
+            const Authorization = $rootScope.loggedUser ? `Bearer ${$rootScope.loggedUser.token}` : '';
+            return $http.get(`${ConfigValue.baseUrl}/posts/${id}`, {
+                headers: {
+                    Authorization
+                }
+            });
         },
     }
 });
