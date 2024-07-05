@@ -37,4 +37,28 @@ angular.module('mediumAmigo', ["ngRoute", 'ui.bootstrap']).run(function($rootSco
         });
     }
 
+    $rootScope.openDeleteModal = function(post_id, e) {
+        try {
+            e.stopPropagation();
+        } catch (error) {
+            e.cancelBubble = true;
+        }
+        
+        const modalInstance = $modal.open({
+            templateUrl: 'view/modal-delete.html',
+            controller: 'ModalDeleteController',
+            resolve: {
+                post_id: function() {
+                    return post_id;
+                }
+            }
+        });
+
+        modalInstance.result.then(function() {
+            $rootScope.goTo('');
+        }).catch(function() {
+            console.log('Modal dismissed');
+        });
+    };
+
 });

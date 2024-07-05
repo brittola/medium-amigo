@@ -29,7 +29,7 @@
                 <li class="doca-dropdown__list__item doca-dropdown__list__item--action">
                     <i class="doca-icon doca-icon__pen doca-icon--solid"></i> Editar
                 </li>
-                <li class="doca-dropdown__list__item doca-dropdown__list__item--action">
+                <li ng-click="openDeleteModal(post.id, true, $event)" class="doca-dropdown__list__item doca-dropdown__list__item--action">
                     <i class="doca-icon doca-icon__trash doca-icon--solid"></i> Excluir
                 </li>
             </ul>
